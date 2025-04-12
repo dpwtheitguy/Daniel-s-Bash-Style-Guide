@@ -36,34 +36,24 @@ Shell should only be used for small utilities or simple wrapper scripts.
 While shell scripting isn’t a full-fledged programming language, it is widely used for lightweight tasks and automation. This style guide acknowledges its utility, but does not recommend it for large-scale or complex development.
 
 Security and Supportability Considerations:
-Shell scripts are error-prone, hard to test, and lack robust security features like input validation, structured exception handling, and dependency management. For anything beyond very simple tasks, prefer more structured languages like Python or Go, which offer:
-
-Better input handling and type safety
-
-Easier integration with CI/CD pipelines and testing frameworks
-
-Stronger error handling, debugging, and logging
-
-More maintainable and secure codebases over time
+1. Shell scripts are error-prone, hard to test, and lack robust security features like input validation, structured exception handling, and dependency management. For anything beyond very simple tasks, prefer more structured languages like Python or Go, which offer:
+2. Better input handling and type safety
+3. Easier integration with CI/CD pipelines and testing frameworks
+4. Stronger error handling, debugging, and logging
+5. More maintainable and secure codebases over time
 
 Use shell scripts only if:
-You're mostly calling other utilities or chaining commands together
-
-The logic is simple, and the script is under 100 lines
-
-There's minimal control flow or conditional logic
-
-Performance is not a primary concern
-
-The script’s lifecycle is short and unlikely to grow in complexity
+1. You're mostly calling other utilities or chaining commands together
+2. The logic is simple, and the script is under 100 lines
+3. There's minimal control flow or conditional logic
+4. Performance is not a primary concern
+5. The script’s lifecycle is short and unlikely to grow in complexity
 
 Avoid shell scripts when:
-The script is growing or already exceeds 100 lines
+1. The script is growing or already exceeds 100 lines
+2. There is non-straightforward control flow
+3. Error handling, data manipulation, or external input processing are required
+4. You want the script to be maintainable by others, or it’s likely to be reused across environments
 
-There is non-straightforward control flow
-
-Error handling, data manipulation, or external input processing are required
-
-You want the script to be maintainable by others, or it’s likely to be reused across environments
-
-Tip: Assume your script will grow. Choosing Python or Go early will help avoid costly rewrites, reduce bugs, and improve security from the start.
+Tip: 
+Assume your script will grow. Choosing Python or Go early will help avoid costly rewrites, reduce bugs, and improve security from the start.
