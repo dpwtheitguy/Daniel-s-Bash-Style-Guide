@@ -25,9 +25,8 @@ Explanation:
 
 This combination helps catch bugs early and prevents unpredictable script behavior.
 
-`
+```
 #!/usr/bin/env bash
 set -euo pipefail
+```
 
-echo "Hello, ${USER:-unknown user}"
-`
