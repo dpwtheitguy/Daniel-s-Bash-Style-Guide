@@ -44,7 +44,7 @@ Security and Supportability Considerations:
 
 Use shell scripts only if:
 1. You're mostly calling other utilities or chaining commands together
-2. The logic is simple, and the script is under 100 lines
+2. The logic is simple, and the script is under ~200 lines
 3. There's minimal control flow or conditional logic
 4. Performance is not a primary concern
 5. The script’s lifecycle is short and unlikely to grow in complexity
