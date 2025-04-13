@@ -69,7 +69,7 @@ This makes it easier to apply consistent naming conventions and track source fil
 
 2. Use no extension when:
 The script is an end-user-facing command added directly to the user’s PATH.
-```
+``` bash
 Example: /usr/local/bin/deploy
 ```
 
@@ -94,7 +94,7 @@ There are too many security issues with shell that make it nearly impossible to 
 Use sudo to provide elevated access if you need it.
 
 
-```
+```bash
 validate_scriptsec() {
   local script_path="$1"
 
@@ -148,3 +148,29 @@ validate_scriptsec() {
   return 0
 }
 ```
+
+# Environment
+
+STDOUT vs STDERR
+All error messages **must go to STDERR**. This separation makes it easier to distinguish between expected output and actual issues, and supports robust scripting, automation, and alerting pipelines.
+
+Here is an example err function you might include directly or as a library.
+```bash
+err() {
+  local message="$*"
+  local timestamp
+  timestamp="$(date +'%Y-%m-%dT%H:%M:%S%z')"
+  local user
+  user="$(whoami)"
+  local script_name
+  script_name="$(basename "$0")"
+
+  # Print to STDERR
+  printf "%s error event=script_error user=%s script=%s message=%q\n" \
+    "$timestamp" "$user" "$script_name" "$message" >&2
+
+  # Send to system log (useful in cron, ephemeral containers, etc.)
+  logger -t "$script_name" \
+    "event=script_error user=$user script=$script_name message=$(printf "%q" "$message")"
+}
+
