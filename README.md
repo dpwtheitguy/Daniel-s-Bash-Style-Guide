@@ -195,4 +195,48 @@ err() {
   logger -t "$script_name" \
     "event=script_error user=$user script=$script_name message=$(printf "%q" "$message")"
 }
+```
 
+# Comments
+File Header
+Start each file with a description of its contents, Authoir, License, Data classification, Intellectual Property tracker and version data. These fields must be filled out for documentation generation automation. 
+
+Free form documentation may exist below the Version data and it's highly recommended that this include ASCII diagrams and debugging notes. If the free form documentation gets too extensive move it's contents to the README.md
+
+```
+#!/usr/bin/env bash
+#
+# ==============================================================================
+# File Header
+# ==============================================================================
+# Description     : Perform hot backups of Oracle databases
+# Author          : user.name <user.name@email.domain>
+# SPDX-License-Identifier: MIT
+# Data Classification: Internal/Confidential/Restricted (Specify classification)
+# Intellectual Property Tracker: IP-12345 (Specify your internal IP tracker or identifier)
+# Version         : 1.0.0
+# Created         : 2025-04-12
+# Last Modified   : 2025-04-12
+#
+# ==============================================================================
+# Free Form Notes:
+# ==============================================================================
+# - Ensure Oracle database is running before initiating the backup
+# - This script can be configured to email completion notifications
+# - Requires Oracle Backup user with appropriate permissions
+#
+# ASCII Diagrams or Debugging Notes:
+# ==============================================================================
+# [INSERT ASCII DIAGRAMS OR DEBUGGING STEPS BELOW IF NECESSARY]
+# E.g., 
+#   +---------------------------+
+#   |     Oracle Hot Backup     |
+#   +---------------------------+
+#   |   Start > Database Online |
+#   +---------------------------+
+#
+# If the free form documentation becomes too extensive, move its contents
+# to a README.md file and provide a link in the file.
+# ==============================================================================
+
+```
