@@ -1,6 +1,28 @@
 # Daniel's Shell Scripting Style Guide
 A style guide for Bash based on Google Style guide. 
 
+## The "meh" of Shell Scripting
+1. Readability counts, even in Bash.
+2. Explicit is better than implicit — flag your assumptions.
+3. Simplicity beats cleverness, especially in production.
+4. Errors should never pass silently (unless explicitly handled).
+5. Shellcheck is your friend.
+6. Logging beats echoing. Use STDERR or syslog, not guesswork.
+7. There should be one obvious way to do it — pick Bash, stick to it.
+8. Avoid side effects and subshell surprises.
+9. Scripts should fail loudly and early. `set -euo pipefail` is a must.
+10. Don't parse output you can't control.
+11. Temporary files are liabilities — clean up after yourself.
+12. Test your scripts with shellcheck and in CI before deployment.
+13. Avoid magic. Future maintainers will thank you.
+14. Naming matters — no more `x`, `tmp`, or `foo`.
+15. Prefer functions over long procedural blobs.
+16. Secure by default — never trust `$1`.
+17. Comments are better than cryptic Bash-fu.
+18. Don’t reinvent package managers. If you need real logic, use Python.
+19. No script should grow beyond what Bash was meant to handle.
+20. When in doubt, break it into smaller scripts — or switch languages.
+
 ## Background
 Bash is the only shell scripting language permitted for executables.
 
