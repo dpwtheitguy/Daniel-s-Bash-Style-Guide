@@ -57,3 +57,38 @@ Avoid shell scripts when:
 
 Tip: 
 Assume your script will grow. Choosing Python or Go early will help avoid costly rewrites, reduce bugs, and improve security from the start.
+
+# Shell Files and Interpreter Invocation
+Shell script executables should have either a .sh extension or no extension, depending on how they’re used. Scripts should check their filename at runtime if needed.
+
+Use .sh extension when:
+1. The script is a source file involved in a build process and the output will be renamed by a build rule.
+Example: foo.sh as the source and a build rule generating foo.
+
+This makes it easier to apply consistent naming conventions and track source files in version control.
+
+2. Use no extension when:
+The script is an end-user-facing command added directly to the user’s PATH.
+```
+Example: /usr/local/bin/deploy
+```
+
+Users shouldn’t need to know the implementation language; shell does not require an extension to execute.
+
+If neither case applies:
+Either choice is acceptable, but be consistent within your project.
+
+Script Location for Executables
+For larger or more complex scripts, place the executable shell wrapper in /bin, and organize supporting libraries and logic separately to improve maintainability.
+
+Shell Libraries
+Shell libraries must have a .sh extension. 
+Libraries should not be executable.
+Store libraries in the /lib directory (or your team’s standardized equivalent).
+
+# SUID/SGID
+SUID and SGID are strictly forbidden on shell scripts and must be explicitly checked for at runtime if applicable.
+
+There are too many security issues with shell that make it nearly impossible to secure sufficiently to allow SUID/SGID. While bash does make it difficult to run SUID, it’s still possible on some platforms which is why we’re being explicit about banning it.
+
+Use sudo to provide elevated access if you need it.
