@@ -92,3 +92,59 @@ SUID and SGID are strictly forbidden on shell scripts and must be explicitly che
 There are too many security issues with shell that make it nearly impossible to secure sufficiently to allow SUID/SGID. While bash does make it difficult to run SUID, it’s still possible on some platforms which is why we’re being explicit about banning it.
 
 Use sudo to provide elevated access if you need it.
+
+
+```
+validate_scriptsec() {
+  local script_path="$1"
+
+  # Constants
+  local SUID_FLAG_PATTERN="s"
+  local VALID_EXTENSION=".sh"
+  local INSECURE_DIRS=("/tmp" "/var/tmp" "/dev/shm")
+
+  if [[ ! -f "$script_path" ]]; then
+    printf "❌ Error: '%s' does not exist or is not a regular file.\n" "$script_path" >&2
+    return 1
+  fi
+
+  local file_name
+  file_name="$(basename "$script_path")"
+
+  # Extension check
+  if [[ "$file_name" == *.* && "$file_name" != *"$VALID_EXTENSION" ]]; then
+    printf "❌ Error: '%s' must have either no extension or a '%s' extension.\n" "$file_name" "$VALID_EXTENSION" >&2
+    return 1
+  fi
+
+  # Insecure directory check
+  local script_dir
+  script_dir="$(dirname "$(readlink -f "$script_path")")"
+  for insecure_dir in "${INSECURE_DIRS[@]}"; do
+    if [[ "$script_dir" == "$insecure_dir"* ]]; then
+      printf "❌ Error: '%s' is located in insecure directory '%s'.\n" "$file_name" "$insecure_dir" >&2
+      return 1
+    fi
+  done
+
+  # Permission bits
+  local permissions permission_string
+  permissions=$(stat -c "%a %A" "$script_path")
+  read -r permission_value permission_string <<< "$permissions"
+
+  # SUID/SGID check
+  if [[ "$permission_string" =~ $SUID_FLAG_PATTERN ]]; then
+    printf "❌ Error: '%s' must not have SUID or SGID bits set.\n" "$file_name" >&2
+    return 1
+  fi
+
+  # Too-permissive permissions
+  if [[ "$permission_value" =~ ^[0-7]*[2367]$ ]]; then
+    printf "❌ Error: '%s' has world-writable or group-writable permissions (%s).\n" "$file_name" "$permission_value" >&2
+    return 1
+  fi
+
+  printf "✅ '%s' passed security checks.\n" "$file_name"
+  return 0
+}
+```
