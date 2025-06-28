@@ -15,6 +15,8 @@ TABLE OF CONTENTS
 8. Naming Conventions
 9. Calling Commands
 10. Consistency and Readability
+11. Error Handling
+12. Secrets
 
 
 0. Culture Themes
@@ -493,3 +495,17 @@ exit-with-message:
   }
 
   [[ -f "$config" ]] || exit-with-message 2 "missing config path=$config"
+
+
+
+12. Handling Passwords and Secrets
+-------------------------------
+- Never hardcode passwords, tokens, or API keys in scripts.
+- Use environment variables or source a separate secrets.sh file (which must be .gitignored and chmod 600).
+- Don’t log secrets — redact them in logs (e.g., token=[REDACTED]).
+
+To read secrets interactively:
+read -rs -p "Enter token: " token && echo
+
+- Keep secret scope minimal (e.g., inline export only for the command).
+- Use sops, gopass, or a secrets manager in production.
