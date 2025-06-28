@@ -5,6 +5,8 @@
 # Daniel Wilson <dwilson@voleon.com>
 # Data Classification: INTERNAL
 
+set -euo pipefail
+
 # Resolve and load optional config if present
 readonly config_path="$(dirname "${BASH_SOURCE[0]}")/../config/config.sh"
 if [[ -r "$config_path" ]]; then
