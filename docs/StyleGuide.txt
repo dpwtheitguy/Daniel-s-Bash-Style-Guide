@@ -1,7 +1,7 @@
 Daniel's Fork of the Google Shell Style Guide
 =====================================================================
+This style guide is to guide AI and users to provide more standard documents. 
 
-Authored, revised, and maintained by many Googlers.
 Modified with clarity, readability, and simplicity principles from the Zen of Python (PEP 20).
 
 TABLE OF CONTENTS
