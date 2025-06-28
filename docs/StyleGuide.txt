@@ -95,6 +95,7 @@ File Extensions and Structure:
 - Config files (.sh):               ../config/
 - Unit tests (.sh):                 ../tests/
 - Documentation (.md):              ../docs/
+- Logs (.log):                     ../logs/
 
 Examples:
   ../bin/deploy.sh
