@@ -1,242 +1,470 @@
-# Daniel's Shell Scripting Style Guide
-A style guide for Bash based on Google Style guide. 
+Daniel's Fork of the Google Shell Style Guide
+=====================================================================
 
-## The "meh" of Shell Scripting
-1. Readability counts, even in Bash.
-2. Explicit is better than implicit — flag your assumptions.
-3. Simplicity beats cleverness, especially in production.
-4. Errors should never pass silently (unless explicitly handled).
-5. Shellcheck is your friend.
-6. Logging beats echoing. Use STDERR or syslog, not guesswork.
-7. There should be one obvious way to do it — pick Bash, stick to it.
-8. Avoid side effects and subshell surprises.
-9. Scripts should fail loudly and early. `set -euo pipefail` is a must.
-10. Don't parse output you can't control.
-11. Temporary files are liabilities — clean up after yourself.
-12. Test your scripts with shellcheck and in CI before deployment.
-13. Avoid magic. Future maintainers will thank you.
-14. Naming matters — no more `x`, `tmp`, or `foo`.
-15. Prefer functions over long procedural blobs.
-16. Secure by default — never trust `$1`.
-17. Comments are better than cryptic Bash-fu.
-18. Don’t reinvent package managers. If you need real logic, use Python.
-19. No script should grow beyond what Bash was meant to handle.
-20. When in doubt, break it into smaller scripts — or switch languages.
+Authored, revised, and maintained by many Googlers.
+Modified with clarity, readability, and simplicity principles from the Zen of Python (PEP 20).
 
-## Background
-Bash is the only shell scripting language permitted for executables.
+TABLE OF CONTENTS
+------------------
+0. Culture themes
+1. Background
+2. Shell Files and Interpreter Invocation
+3. Environment
+4. Comments
+5. Formatting
+6. Features and Bugs
+7. Aliases
+8. Naming Conventions
+9. Calling Commands
+10. Consistency and Readability
 
-All executable shell scripts must start with a shebang line using the /usr/bin/env pattern:
 
-`#!/usr/bin/env bash`
+0. Culture Themes
+--------------
 
-This ensures the script uses the bash interpreter found in the user's PATH, increasing portability across environments where bash may not be located at /bin/bash.
+Zen of Python:
+Beautiful is better than ugly.
+Explicit is better than implicit.
+Simple is better than complex.
+Complex is better than complicated.
+Flat is better than nested.
+Sparse is better than dense.
+Readability counts.
+Special cases aren't special enough to break the rules.
+Although practicality beats purity.
+Errors should never pass silently.
+Unless explicitly silenced.
+In the face of ambiguity, refuse the temptation to guess.
+There should be one-- and preferably only one --obvious way to do it.
+Although that way may not be obvious at first unless you're Dutch.
+Now is better than never.
+Although never is often better than *right* now.
+If the implementation is hard to explain, it's a bad idea.
+If the implementation is easy to explain, it may be a good idea.
+Namespaces are one honking great idea -- let's do more of those!
 
-Use minimal flags in the shebang. Instead, configure script behavior using set within the script body. This ensures consistent behavior even if the script is run manually using bash script.sh.
+Keep it DRY:
+Reduce duplication of code, logic, and configuration
+Improve maintainability — update logic in one place, not many
+Prevent bugs — changes in one copy won't be forgotten in others
+Refactor repetitive code into functions, classes, or modules.
+Use variables/constants instead of magic numbers or hardcoded strings.
+Create reusable components (e.g., in HTML, React, or APIs).
+Apply templates for repeated document or UI structure.
+Centralize logic such as validation or business rules.
 
-Recommended set flags
-Include these at the top of your script:
-`set -euo pipefail`
-Explanation:
+Themes: 
+"Write this script like NASA Security engineers were going to review it"
+"Write this script as if a RedTeamer was going to hack it"
+"Write this script log tracability matters" 
+"Every script needs to be written in such as way a machine can use it non-interactively or a human can use it interactively"
+"The level of quality of the resulting script should surpass Meta and Google coding interviews" 
+"When you asked to code a script to an OS, ensure you validate that you are on that OS"
+"Script that might need priviledge such as installs should check what user the script is running as" 
 
--e: Exit immediately if any command exits with a non-zero status.
 
--u: Treat unset variables as an error and exit.
+1. BACKGROUND
+--------------
+Which Shell to Use:
+- Use Bash exclusively for executable scripts.
+- Shebang must be to improve portability:
+  #!/usr/bin/env bash
+- Set all required set options (e.g., set -euo pipefail) within the script body, not in the shebang line.
+- POSIX compliance is not required unless needed for portability.
 
--o pipefail: Return the exit code of the last command in the pipeline that failed, rather than the last command overall.
+When to Use Shell:
+- Shell is ideal for simple automation and command wrapping.
+- Avoid using shell for large, complex, or performance-critical tasks.
+- Advocate the use of Python or Go for more complex scripts or tasks
 
-This combination helps catch bugs early and prevents unpredictable script behavior.
-
-```
+The final header should include the following 
 #!/usr/bin/env bash
-set -euo pipefail
-```
+# A human readable description
+# SPDX-FileCopyrightText: The Voleon Group
+# SPDX-License-Identifier: None
+# First Last <flast@company.com>
+# Data Classification: INTERNAL
 
-# When to use Shell? 
-Shell should only be used for small utilities or simple wrapper scripts.
+2. SHELL FILES AND INTERPRETER INVOCATION
+------------------------------------------
+File Extensions and Structure:
 
-While shell scripting isn’t a full-fledged programming language, it is widely used for lightweight tasks and automation. This style guide acknowledges its utility, but does not recommend it for large-scale or complex development.
+- Executables (.sh or none):        ../bin/
+- Libraries (.sh, not executable):  ../lib/
+- Config files (.sh):               ../config/
+- Unit tests (.sh):                 ../tests/
+- Documentation (.md):              ../docs/
 
-Security and Supportability Considerations:
-1. Shell scripts are error-prone, hard to test, and lack robust security features like input validation, structured exception handling, and dependency management. For anything beyond very simple tasks, prefer more structured languages like Python or Go, which offer:
-2. Better input handling and type safety
-3. Easier integration with CI/CD pipelines and testing frameworks
-4. Stronger error handling, debugging, and logging
-5. More maintainable and secure codebases over time
+Examples:
+  ../bin/deploy.sh
+  ../lib/utils.sh
+  ../config/config.sh
+  ../tests/test_utils.sh
+  ../docs/usage.md
 
-Use shell scripts only if:
-1. You're mostly calling other utilities or chaining commands together
-2. The logic is simple, and the script is under ~200 lines
-3. There's minimal control flow or conditional logic
-4. Performance is not a primary concern
-5. The script’s lifecycle is short and unlikely to grow in complexity
+SUID/SGID:
 
-Avoid shell scripts when:
-1. The script is growing or already exceeds 100 lines
-2. There is non-straightforward control flow
-3. Error handling, data manipulation, or external input processing are required
-4. You want the script to be maintainable by others, or it’s likely to be reused across environments
+- Do NOT use SUID or SGID on shell scripts.
+- Use 'sudo' for elevated privileges when needed.
 
-Tip: 
-Assume your script will grow. Choosing Python or Go early will help avoid costly rewrites, reduce bugs, and improve security from the start.
+3. ENVIRONMENT
+--------------
 
-# Shell Files and Interpreter Invocation
-Shell script executables should have either a .sh extension or no extension, depending on how they’re used. Scripts should check their filename at runtime if needed.
+Output Streams:
+- Use STDOUT for regular output.
+- Use STDERR for errors and diagnostics.
 
-Use .sh extension when:
-1. The script is a source file involved in a build process and the output will be renamed by a build rule.
-Example: foo.sh as the source and a build rule generating foo.
+Logging:
+- Use 'printf' instead of 'echo' for safer, more predictable output.
+- Default log format: key=value
+- Support JSON logging via a toggle variable.
+- Always ensure you're output is in a key value binding to approved nouns, CIM or OCSF
+- Everything logged must be well formed. 
 
-This makes it easier to apply consistent naming conventions and track source files in version control.
+Logging Function:
+- Name: Write-Error (PowerShell-inspired for cross-platform clarity)
+- Output target: STDERR
+- Format: key=value or JSON depending on LOG_FORMAT
 
-2. Use no extension when:
-The script is an end-user-facing command added directly to the user’s PATH.
-``` bash
-Example: /usr/local/bin/deploy
-```
+Example:
 
-Users shouldn’t need to know the implementation language; shell does not require an extension to execute.
+  LOG_FORMAT="kv"  # Options: "kv" or "json"
 
-If neither case applies:
-Either choice is acceptable, but be consistent within your project.
+  erite-error() {
+    local message="$1"
+    local timestamp
+    timestamp="$(date +'%Y-%m-%dT%H:%M:%S%z')"
 
-Script Location for Executables
-For larger or more complex scripts, place the executable shell wrapper in /bin, and organize supporting libraries and logic separately to improve maintainability.
-
-Shell Libraries
-Shell libraries must have a .sh extension. 
-Libraries should not be executable.
-Store libraries in the /lib directory (or your team’s standardized equivalent).
-
-# SUID/SGID
-SUID and SGID are strictly forbidden on shell scripts and must be explicitly checked for at runtime if applicable.
-
-There are too many security issues with shell that make it nearly impossible to secure sufficiently to allow SUID/SGID. While bash does make it difficult to run SUID, it’s still possible on some platforms which is why we’re being explicit about banning it.
-
-Use sudo to provide elevated access if you need it.
-
-
-```bash
-validate_scriptsec() {
-  local script_path="$1"
-
-  # Constants
-  local SUID_FLAG_PATTERN="s"
-  local VALID_EXTENSION=".sh"
-  local INSECURE_DIRS=("/tmp" "/var/tmp" "/dev/shm")
-
-  if [[ ! -f "$script_path" ]]; then
-    printf "❌ Error: '%s' does not exist or is not a regular file.\n" "$script_path" >&2
-    return 1
-  fi
-
-  local file_name
-  file_name="$(basename "$script_path")"
-
-  # Extension check
-  if [[ "$file_name" == *.* && "$file_name" != *"$VALID_EXTENSION" ]]; then
-    printf "❌ Error: '%s' must have either no extension or a '%s' extension.\n" "$file_name" "$VALID_EXTENSION" >&2
-    return 1
-  fi
-
-  # Insecure directory check
-  local script_dir
-  script_dir="$(dirname "$(readlink -f "$script_path")")"
-  for insecure_dir in "${INSECURE_DIRS[@]}"; do
-    if [[ "$script_dir" == "$insecure_dir"* ]]; then
-      printf "❌ Error: '%s' is located in insecure directory '%s'.\n" "$file_name" "$insecure_dir" >&2
-      return 1
+    if [[ "$LOG_FORMAT" == "json" ]]; then
+      printf '{ "time": "%s", "level": "error", "message": "%s" }\n' "$timestamp" "$message" >&2
+    else
+      printf 'time=%s level=error message="%s"\n' "$timestamp" "$message" >&2
     fi
-  done
+  }
 
-  # Permission bits
-  local permissions permission_string
-  permissions=$(stat -c "%a %A" "$script_path")
-  read -r permission_value permission_string <<< "$permissions"
-
-  # SUID/SGID check
-  if [[ "$permission_string" =~ $SUID_FLAG_PATTERN ]]; then
-    printf "❌ Error: '%s' must not have SUID or SGID bits set.\n" "$file_name" >&2
-    return 1
+  if ! do_something; then
+    write-wrror "do_something failed"
+    exit 1
   fi
 
-  # Too-permissive permissions
-  if [[ "$permission_value" =~ ^[0-7]*[2367]$ ]]; then
-    printf "❌ Error: '%s' has world-writable or group-writable permissions (%s).\n" "$file_name" "$permission_value" >&2
-    return 1
+
+4. COMMENTS
+------------
+File Headers:
+- Begin each script with a comment describing its purpose.
+
+Function Comments:
+- Include purpose, globals, arguments, outputs, and return values.
+
+Example:
+  #######################################
+  # Deletes old backup files to free space.
+  # Globals:
+  #   BACKUP_DIR
+  # Arguments:
+  #   None
+  # Returns:
+  #   None
+  #######################################
+
+Implementation Comments:
+- Add comments where logic is non-obvious. Keep them concise and useful.
+
+TODOs:
+- Use standard TODO format:
+  # TODO(jdoe): Fix corner case for invalid config files.
+
+5. FORMATTING
+--------------
+Indentation:
+- Use 2 spaces per level of indentation. No tabs.
+
+Line Length:
+- Max 80 characters. Break long commands sensibly.
+
+Pipelines:
+- If a pipeline exceeds 80 characters, break each part into a new line:
+  cmd1 \
+    | cmd2 \
+    | cmd3
+
+Control Flow:
+- Keep 'then', 'do', 'else' on the same line as condition:
+  if condition; then
+    ...
   fi
 
-  printf "✅ '%s' passed security checks.\n" "$file_name"
-  return 0
-}
-```
+Case Statements:
+  case "$var" in
+    a)
+      action ;;
+    *)
+      default ;;
+  esac
 
-# Environment
+Variable Expansion:
+- Quote all variables unless a word split is explicitly required.
+- Use "${src_ips}" form for clarity.
 
-STDOUT vs STDERR
-All error messages **must go to STDERR**. This separation makes it easier to distinguish between expected output and actual issues, and supports robust scripting, automation, and alerting pipelines.
+6. FEATURES AND BUGS
+---------------------
+ShellCheck:
+- Use ShellCheck to lint all scripts before deployment.
 
-Here is an example err function you might include directly or as a library.
-```bash
-err() {
-  local message="$*"
-  local timestamp
-  timestamp="$(date +'%Y-%m-%dT%H:%M:%S%z')"
-  local user
-  user="$(whoami)"
-  local script_name
-  script_name="$(basename "$0")"
+Command Substitution:
+- Use $(...) instead of backticks for clarity.
 
-  # Print to STDERR
-  printf "%s error event=script_error user=%s script=%s message=%q\n" \
-    "$timestamp" "$user" "$script_name" "$message" >&2
+Test Constructs:
+- Prefer [[ ... ]] for string tests, (( ... )) for arithmetic.
 
-  # Send to system log (useful in cron, ephemeral containers, etc.)
-  logger -t "$script_name" \
-    "event=script_error user=$user script=$script_name message=$(printf "%q" "$message")"
-}
-```
+Wildcard Expansion:
+- Avoid unquoted globs. Use ./prefix* instead of prefix*.
 
-# Comments
-File Header
-Start each file with a description of its contents, Authoir, License, Data classification, Intellectual Property tracker and version data. These fields must be filled out for documentation generation automation. 
+Avoid 'eval':
+- Avoid using 'eval' unless absolutely necessary. Prefer explicit logic.
 
-Free form documentation may exist below the Version data and it's highly recommended that this include ASCII diagrams and debugging notes. If the free form documentation gets too extensive move it's contents to the README.md
+Arrays:
+- Use Bash arrays for lists and argument groups. Expand as "${array[@]}".
+- arrays should always be the plural (file_names) of the singular (file_name)
 
-```
-#!/usr/bin/env bash
-#
-# ==============================================================================
-# File Header
-# ==============================================================================
-# Description     : Perform hot backups of Oracle databases
-# Author          : user.name <user.name@email.domain>
-# SPDX-License-Identifier: MIT
-# Data Classification: Internal/Confidential/Restricted (Specify classification)
-# Intellectual Property Tracker: IP-12345 (Specify your internal IP tracker or identifier)
-# Version         : 1.0.0
-# Created         : 2025-04-12
-# Last Modified   : 2025-04-12
-#
-# ==============================================================================
-# Free Form Notes:
-# ==============================================================================
-# - Ensure Oracle database is running before initiating the backup
-# - This script can be configured to email completion notifications
-# - Requires Oracle Backup user with appropriate permissions
-#
-# ASCII Diagrams or Debugging Notes:
-# ==============================================================================
-# [INSERT ASCII DIAGRAMS OR DEBUGGING STEPS BELOW IF NECESSARY]
-# E.g., 
-#   +---------------------------+
-#   |     Oracle Hot Backup     |
-#   +---------------------------+
-#   |   Start > Database Online |
-#   +---------------------------+
-#
-# If the free form documentation becomes too extensive, move its contents
-# to a README.md file and provide a link in the file.
-# ==============================================================================
+e.g.
+usernames=(alice bob charlie diana edward frank grace hank irene jack)
 
-```
+for username in "${usernames[@]}"; do
+  printf 'User: %s\n' "$username"
+done
+
+While Loops and Scope:
+- Avoid 'while ... | read' since it can spawn subshells.
+- Prefer process substitution or readarray.
+
+Arithmetic:
+- Use (( expression )) or $(( expression )).
+- Avoid legacy forms like let or expr.
+
+7. ALIASES
+-----------
+- Avoid aliases in scripts. Use functions instead for portability and clarity.
+
+
+8. NAMING CONVENTIONS
+----------------------
+Function Names:
+- functions must always be decalred with function in front
+e.g.
+function do-something
+NOT
+do-something
+- Avoid putting if/then/else/case/switch and other logic in main use fucntions
+- all scripts must start with main
+- Use lowercase with dash (e.g., get-username)
+- For libraries, use namespaced functions: libname::function-name.
+- functions should always be in the format of verb-noun
+- functions should never be in the format of a single word
+- All function names must use lowercase with hyphens (dashes), never underscores. This is mandatory.
+ 
+E.g.
+ function install-packages {
+NO
+function install_packages {
+function Install_Packages {
+
+- function name must match the regex of function [a-z0-9_]+_[a-z0-9_]+\s*\(
+- Limit function verbs to this list
+add,clear,close,copy,enter,exit,find,get,hide,join,lock,merge,move,new,
+open,optimize,pop,print,push,redo,remove,rename,reset,resize,search,
+select,set,show,skip,split,start,step,stop,switch,undo,unlock,watch,wait,
+enable,disable,export,import,install,uninstall,register,unregister,
+backup,restore,check,compare,convert,debug,measure,resolve,test,trace,
+update,use
+
+
+
+Variable Names:
+- variables must use local and readonly when ever possible
+- Use descriptive, readable names:
+  file_path="/log/myapp"
+  count=3
+
+- Limit choices on variables names to these nouns
+access_count, access_time, action, action_mode, action_name, action_status
+additional_answer_count, affect_dest, answer, answer_count, app, app_id, array
+authentication_method, authentication_service, authority_answer_count
+availability, avg_executions, blocksize, body, buckets, buckets_size
+buffer_cache_hit_ratio, bugtraq, bytes, bytes_in, bytes_out, cached, category
+cert, change, change_type, channel, cluster, cm_enabled, cm_supported, command
+comments, commits, committed_memory, compilation_time, complete, component
+cookie, cpu_cores, cpu_count, cpu_load_mhz, cpu_load_percent, cpu_mhz
+cpu_time, cpu_time_enabled, cpu_time_supported, cpu_used, cpu_user_percent
+creation_time, cron, current_cpu_time, current_loaded, current_user_time
+cursor, cve, cvss, daemon_thread_count, datamodel, date, delay, description
+dest, dest_bunit, dest_category, dest_dns, dest_interface, dest_ip
+dest_ip_range, dest_is_expected, dest_mac, dest_name, dest_nt_domain
+dest_nt_host, dest_port, dest_port_range, dest_priority, dest_requires_av
+dest_should_timesync, dest_should_update, dest_translated_ip
+dest_translated_port, dest_type, dest_url, dest_zone, digest, direction
+dlp_type, dns, dump_area_used, duration, dvc, dvc_bunit, dvc_category, dvc_ip
+dvc_mac, dvc_priority, dvc_zone, earliest, elapsed_time, email, enabled
+endpoint, endpoint_version, error_code, event_id, family, fan_speed, fd_max
+fd_used, free_bytes, free_physical_memory, free_swap, heap_committed
+heap_initial, heap_max, heap_used, host, http_content_type, http_method
+http_referrer, http_referrer_domain, http_user_agent, http_user_agent_length
+hypervisor, hypervisor_id, icmp_code, icmp_type, id, ids_type, image_id
+incident, indexes_hit, info, inline_nat, instance_name, instance_reads
+instance_type, instance_version, instance_writes, interactive, interface
+internal_message_id, ip, is_inprogress, jvm_description, last_call_minute
+last_error, last_sid, latency, latest, lb_method, lease_duration, lease_scope
+lock_mode, lock_session_id, logical_reads, logon_time, mac, machine, mem
+mem_committed, mem_free, mem_used, memory_sorts, message
+message_consumed_time, message_correlation_id, message_delivered_time
+message_delivery_mode, message_expiration_time, message_id, message_info
+message_priority, message_properties, message_received_time
+message_redelivered, message_reply_dest, message_type, mitre_technique_id
+mod_time, mount, msft, mskb, name, node, node_port, non_heap_committed
+non_heap_initial, non_heap_max, non_heap_used, number_of_users, obj_name
+object, object_attrs, object_category, object_id, object_path, object_size
+objects_pending, omu_supported, operation, orig_dest, orig_recipient, orig_rid
+orig_sid, orig_src, os, os_architecture, os_pid, os_version, owner
+owner_email, owner_id, owtousetheseref, packets, packets_in, packets_out
+parameters, parent, parent_object, parent_object_category, parent_object_id
+parent_process, parent_process_exec, parent_process_guid, parent_process_id
+parent_process_name, parent_process_path, password, payload, payload_type
+peak_thread_count, physical_memory, physical_reads, power, priority, problem
+process, process_current_directory, process_exec, process_guid, process_hash
+process_id, process_integrity_level, process_limit, process_name, process_path
+processes, product_version, protocol, protocol_version, query, query_count
+query_id, query_plan_hit, query_time, query_type, question, read_blocks
+read_latency, read_ops, reason, recipient, recipient_count, recipient_domain
+recipient_status, record_type, records_affected, registry_hive
+registry_key_name, registry_path, registry_value_data, registry_value_name
+registry_value_text, registry_value_type, reply_code, reply_code_id
+request_payload, request_payload_type, request_sent_time, resource_type
+response_code, response_payload_type, response_received_time, response_time
+result, result_id, retention, retries, return_addr, return_message, rid
+rpc_protocol, rule, rule_action, same, savedsearch_name, search, search_et
+search_lt, search_name, search_type, seconds_in_wait, sender, serial
+serial_num, service, service_dll, service_dll_hash, service_dll_path
+service_dll_signature_exists, service_exec, service_hash, service_id
+service_name, service_path, service_signature_exists, session_id
+session_limit, session_status, sessions, severity, severity_id
+sga_buffer_cache_size, sga_buffer_hit_limit, sga_data_dict_hit_ratio
+sga_free_memory, sga_library_cache_size, sga_redo_log_buffer_size
+sga_shared_pool_size, sga_sql_area_size, shell, sid, signature
+signature_extra, signature_id, signature_version, site, size, snapshot, source
+sourcetype, spent, splunk_id, splunk_realm, splunk_server, src, src_bunit
+src_category, src_dns, src_interface, src_ip, src_ip_range, src_mac
+src_nt_domain, src_nt_host, src_port, src_port_range, src_priority
+src_requires_av, src_should_timesync, src_should_update, src_translated_ip
+src_translated_port, src_type, src_user, src_user_bunit, src_user_category
+src_user_domain, src_user_id, src_user_name, src_user_priority, src_user_role
+src_user_type, src_zone, ssid, ssl_end_time, ssl_engine, ssl_hash
+ssl_is_valid, ssl_issuer, ssl_issuer_common_name, ssl_issuer_email
+ssl_issuer_email_domain, ssl_issuer_locality, ssl_issuer_organization
+ssl_issuer_state, ssl_issuer_street, ssl_issuer_unit, ssl_name, ssl_policies
+ssl_publickey, ssl_publickey_algorithm, ssl_serial, ssl_session_id
+ssl_signature_algorithm, ssl_start_time, ssl_subject, ssl_subject_common_name
+ssl_subject_email, ssl_subject_email_domain, ssl_subject_locality
+ssl_subject_organization, ssl_subject_state, ssl_subject_street
+ssl_subject_unit, ssl_validity_window, ssl_version, start_mode, start_time
+state, status, status_code, storage, storage_free, storage_free_percent
+storage_name, storage_used, storage_used_percent, stored_procedures_called
+subject, summary_id, swap, swap_free, swap_space, swap_used, synch_supported
+system_load, table_scans, tables_hit, tablespace_name, tablespace_reads
+tablespace_status, tablespace_used, tablespace_writes, tag, temperature
+thread_count, threads_started, thruput, thruput_max, ticket_id, time
+time_submitted, to, tos, total_loaded, total_processors, total_unloaded
+transaction_id, transport, transport_dest_port, ttl, type, uptime, uri
+uri_path, uri_query, url, url_domain, url_length, user, user_agent, user_bunit
+user_category, user_group, user_id, user_name, user_priority, user_role
+user_type, vendor_account, vendor_product, vendor_product_id, vendor_region
+version, view, vip_port, vlan, wait_state, wait_time, with, write_blocks
+write_latency, write_ops, xdelay, xref
+- Feel free to combine the above noun list with the above verb list as needed 
+- Avoid single-letter names except in concise loops.
+- When you really need to, borrow from the OCSF
+
+9. CALLING COMMANDS
+---------------------
+
+- Always verify command return values:
+
+  if ! rm "$file"; then
+    printf 'Failed to delete %s\n' "$file" >&2
+  fi
+
+- Prefer built-in Bash features over external tools where possible.
+
+
+10. CONSISTENCY AND READABILITY
+-------------------------------
+- Prefer clarity over cleverness.
+- Expand one-liners into explicit logic when it helps understanding.
+- Prefer one obvious way to do a task.
+- Be consistent with style within a project.
+- Use helper libraries for reusable functions.
+- Write modular functions that are testable.
+- Consider using 'bats' or similar tools for testing.
+
+11. Error Handling
+-------------------------------
+
+Fail Fast:
+- All scripts must include: set -euo pipefail
+  - -e: exit on error
+  - -u: error on unset vars
+  - -o pipefail: fail pipelines early
+- Temporarily disable with `set +e` only when explicitly handling errors.
+
+Traps:
+- Use of traps to enforce cleanup and log consistent failure messages is required 
+
+Example:
+
+  function write-error {
+    local msg="$1"
+    local ts
+    ts="$(date +'%Y-%m-%dT%H:%M:%S%z')"
+    printf 'time=%s level=error message="%s"\n' "$ts" "$msg" >&2
+  }
+
+  function handle-error {
+    write-error "failure at line $BASH_LINENO (exit=$?)"
+    exit 1
+  }
+
+  trap handle-error ERR
+  trap handle-error EXIT
+
+Retries:
+- Retry transient operations like network calls.
+
+  for attempt in {1..3}; do
+    curl -sf https://example.com && break
+    write-error "retry $attempt failed"
+    sleep 1
+  done || exit 1
+
+Cleanup:
+- Always clean temp files via trap.
+
+  TMP_FILE="$(mktemp)"
+  trap 'rm -f "$TMP_FILE"' EXIT
+
+exit-with-message:
+- Exit with logging:
+
+  function exit-with-message {
+    write-error "$2"
+    exit "$1"
+  }
+
+  [[ -f "$config" ]] || exit-with-message 2 "missing config path=$config"
+
+
+
+
+FINAL NOTES
+------------
+- The best shell script is one that a teammate can easily read and debug.
+- Be thoughtful about maintainability, clarity, and the cost of clever shortcuts.
+- Keep code beautiful, consistent, and well-commented.
