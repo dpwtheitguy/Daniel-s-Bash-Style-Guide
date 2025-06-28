@@ -2,7 +2,7 @@
 # Structured, Splunk-friendly logger with optional HEC support
 # SPDX-FileCopyrightText: The Voleon Group
 # SPDX-License-Identifier: None
-# Daniel Wilson <dwilson@voleon.com>
+# Daniel Wilson <hello@here.com>
 # Data Classification: INTERNAL
 
 # LOG_FORMAT options: "kv", "json", "hec"
