@@ -3,7 +3,7 @@
 # Used by: ../lib/logging.sh
 # SPDX-FileCopyrightText: The Voleon Group
 # SPDX-License-Identifier: None
-# Daniel Wilson <dwilson@voleon.com>
+# Daniel Wilson <dwilson@domain.com>
 # Data Classification: INTERNAL
 
 #######################################
