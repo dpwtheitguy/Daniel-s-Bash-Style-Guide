@@ -460,12 +460,3 @@ exit-with-message:
   }
 
   [[ -f "$config" ]] || exit-with-message 2 "missing config path=$config"
-
-
-
-
-FINAL NOTES
-------------
-- The best shell script is one that a teammate can easily read and debug.
-- Be thoughtful about maintainability, clarity, and the cost of clever shortcuts.
-- Keep code beautiful, consistent, and well-commented.
