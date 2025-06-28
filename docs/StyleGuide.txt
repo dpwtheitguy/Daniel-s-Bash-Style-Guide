@@ -68,6 +68,7 @@ Use variables/constants instead of magic numbers or hardcoded strings.
 Create reusable components (e.g., in HTML, React, or APIs).
 Apply templates for repeated document or UI structure.
 Centralize logic such as validation or business rules.
+Avoid typing the same string more than once in a script. 
 
 Themes: 
 "Write this script like NASA Security engineers were going to review it"
