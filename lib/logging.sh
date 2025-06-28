@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # Structured, Splunk-friendly logger with optional HEC support
-# SPDX-FileCopyrightText: The Voleon Group
+# SPDX-FileCopyrightText: None
 # SPDX-License-Identifier: None
-# Daniel Wilson <dwilson@voleon.com>
+# Daniel Wilson <dwilson@domain.com>
 # Data Classification: INTERNAL
 
 set -euo pipefail
