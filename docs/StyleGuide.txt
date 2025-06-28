@@ -179,7 +179,7 @@ Function Comments:
 
 Example:
   #######################################
-  # Deletes old backup files to free space.
+  # does a thing
   # Globals:
   #   BACKUP_DIR
   # Arguments:
@@ -187,6 +187,10 @@ Example:
   # Returns:
   #   None
   #######################################
+  function do-thing {
+  printf ...
+  exit 0
+  } 
 
 Implementation Comments:
 - Add comments where logic is non-obvious. Keep them concise and useful.
