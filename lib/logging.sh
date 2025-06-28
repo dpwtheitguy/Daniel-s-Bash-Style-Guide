@@ -80,4 +80,79 @@ function write-log {
 #   $3: host
 #   $4: script
 #   $5: pid
-#   $6: mess
+#   $6: message
+#######################################
+function write-splunkhec {
+  local level="$1"
+  readonly level
+
+  local timestamp="$2"
+  readonly timestamp
+
+  local host="$3"
+  readonly host
+
+  local script="$4"
+  readonly script
+
+  local pid="$5"
+  readonly pid
+
+  local message="$6"
+  readonly message
+
+  if [[ -z "${SPLUNK_HEC_TOKEN:-}" || -z "${SPLUNK_HEC_URL:-}" || -z "${SPLUNK_HEC_PORT:-}" ]]; then
+    printf 'time="%s" level="error" message="Missing required HEC config: SPLUNK_HEC_TOKEN, SPLUNK_HEC_URL, SPLUNK_HEC_PORT"\n' "$timestamp" >&2
+    return 1
+  fi
+
+  local payload
+  payload=$(cat <<EOF
+{
+  "time": "$(date +%s)",
+  "host": "$host",
+  "source": "$script",
+  "event": {
+    "level": "$level",
+    "script": "$script",
+    "pid": "$pid",
+    "message": "$message"
+  }
+}
+EOF
+)
+
+  curl -s -o /dev/null -w "%{http_code}" \
+    -H "Authorization: Splunk $SPLUNK_HEC_TOKEN" \
+    -H "Content-Type: application/json" \
+    -d "$payload" \
+    "https://${SPLUNK_HEC_URL}:${SPLUNK_HEC_PORT}/services/collector/event" \
+    || printf 'time="%s" level="error" message="Failed to send log to Splunk HEC"\n' "$timestamp" >&2
+}
+
+#######################################
+# Shortcut: log an info-level message
+# Arguments:
+#   $@: message
+#######################################
+function write-info {
+  write-log "info" "$@"
+}
+
+#######################################
+# Shortcut: log a debug-level message
+# Arguments:
+#   $@: message
+#######################################
+function write-debug {
+  write-log "debug" "$@"
+}
+
+#######################################
+# Shortcut: log an error-level message to STDERR
+# Arguments:
+#   $@: message
+#######################################
+function write-error {
+  write-log "error" "$@" >&2
+}
