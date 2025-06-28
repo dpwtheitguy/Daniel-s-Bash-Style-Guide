@@ -178,7 +178,8 @@ File Headers:
 - Begin each script with a comment describing its purpose.
 
 Function Comments:
-- Include purpose, globals, arguments, outputs, and return values.
+- Include purpose, globals, arguments, outputs, and return values. Goes above function. 
+- Watch count of *'s 
 
 Example:
   #######################################
@@ -260,6 +261,11 @@ usernames=(alice bob charlie diana edward frank grace hank irene jack)
 
 for username in "${usernames[@]}"; do
   printf 'User: %s\n' "$username"
+done
+
+NOT
+for pet in "${pet_list[@]}"; do
+  printf 'Pet: %s\n' "$pet"
 done
 
 While Loops and Scope:
