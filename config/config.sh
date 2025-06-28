@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Configuration for structured logging
 # Used by: ../lib/logging.sh
-# SPDX-FileCopyrightText: The Voleon Group
+# SPDX-FileCopyrightText: None
 # SPDX-License-Identifier: None
 # Daniel Wilson <dwilson@domain.com>
 # Data Classification: INTERNAL
