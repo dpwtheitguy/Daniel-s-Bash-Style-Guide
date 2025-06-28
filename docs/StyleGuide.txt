@@ -179,7 +179,7 @@ Function Comments:
 
 Example:
   #######################################
-  # does a thing
+  # Does a thing. 
   # Globals:
   #   BACKUP_DIR
   # Arguments:
@@ -188,8 +188,8 @@ Example:
   #   None
   #######################################
   function do-thing {
-  printf ...
-  exit 0
+    printf ...
+    exit 0
   } 
 
 Implementation Comments:
