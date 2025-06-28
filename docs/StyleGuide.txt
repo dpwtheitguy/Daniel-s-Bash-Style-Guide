@@ -59,6 +59,9 @@ Themes:
 "The level of quality of the resulting script should surpass Meta and Google coding interviews" 
 "When you asked to code a script to an OS, ensure you validate that you are on that OS"
 "Script that might need priviledge such as installs should check what user the script is running as" 
+"The best shell script is one that a teammate can easily read and debug."
+"Be thoughtful about maintainability, clarity, and the cost of clever shortcuts."
+"Keep code beautiful, consistent, and well-commented."
 
 
 1. BACKGROUND
