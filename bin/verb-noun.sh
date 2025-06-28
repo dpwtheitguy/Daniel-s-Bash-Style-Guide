@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # A simple Hello World script using structured logging and a main function
-# SPDX-FileCopyrightText: The Voleon Group
+# SPDX-FileCopyrightText: None
 # SPDX-License-Identifier: None
 # Daniel Wilson <dwilson@domain.com>
 # Data Classification: INTERNAL
