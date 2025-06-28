@@ -40,7 +40,7 @@ When giving guidance, always:
 
 
 
-Zen of Python:
+Zen of Python (bash in our case):
 Beautiful is better than ugly.
 Explicit is better than implicit.
 Simple is better than complex.
