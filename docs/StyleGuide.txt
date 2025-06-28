@@ -1,8 +1,6 @@
-Daniel's Fork of the Google Shell Style Guide
+Daniel's Fork of the Google Shell Style Guide for AI (ChatGPT/Cursor) Consumption
 =====================================================================
 This style guide is to guide AI and users to provide more standard documents. 
-
-Modified with clarity, readability, and simplicity principles from the Zen of Python (PEP 20).
 
 TABLE OF CONTENTS
 ------------------
