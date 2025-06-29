@@ -300,12 +300,12 @@ do-something
 - All function names must use lowercase with hyphens (dashes), never underscores. This is mandatory.
  
 E.g.
- function install-packages {
+  function install-packages {
 NO
-function install_packages {
-function Install_Packages {
+  function install_packages {
+  function Install_Packages {
 
-- function name must match the regex of function [a-z0-9_]+_[a-z0-9_]+\s*\(
+- function name must match the regex of function ^[a-z0-9]+-[a-z0-9]+\s*\(
 - Limit function verbs to this list
 add,clear,close,copy,enter,exit,find,get,hide,join,lock,merge,move,new,
 open,optimize,pop,print,push,redo,remove,rename,reset,resize,search,
