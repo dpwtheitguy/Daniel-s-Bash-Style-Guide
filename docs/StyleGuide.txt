@@ -443,7 +443,7 @@ write_latency, write_ops, xdelay, xref
 
 11. Error Handling
 -------------------------------
-
+- Functions must always explicitly end with a return or exit. 
 Fail Fast:
 - All scripts must include: set -euo pipefail
   - -e: exit on error
