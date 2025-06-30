@@ -234,6 +234,7 @@ Case Statements:
   esac
 
 Variable Expansion:
+- Single quote unless variable expansion is needed. 
 - Quote all variables unless a word split is explicitly required.
 - Use "${src_ips}" form for clarity.
 
