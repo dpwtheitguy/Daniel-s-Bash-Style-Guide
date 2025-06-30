@@ -318,6 +318,7 @@ update,use
 
 Variable Names:
 - variables must use local and readonly when ever possible
+- Constants shoud be capitalized
 - Use descriptive, readable names:
   file_path="/log/myapp"
   count=3
