@@ -333,17 +333,19 @@ e.g.
  function SERVICES::disable-unneeded
 
 - Functions should not have more than one hyphen
-e.g.
+e.g. like this
   install-cniplugin
 NOT
   install-cni-plugin
 
 E.g.
   function install-packages {
+
 NOT
-  function disable-unnecessary-services {
-  function install_packages {
-  function Install_Packages {
+  function harden-file-permissions { # too many dashes
+  function disable-unnecessary-services { # too many dashes
+  function install_packages { # underscores are for vars not functions
+  function Install_Packages { # all lower case is required
 
 - function name must match the regex of function ^[a-z0-9]+-[a-z0-9]+\s*\(
 - Limit function verbs to this list
