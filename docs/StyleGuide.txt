@@ -180,10 +180,11 @@ File Headers:
 - Begin each script with a comment describing its purpose.
 
 Function Comments:
+- All functions must haves. 
 - Include purpose, globals, arguments, outputs, and return values. Goes above function. 
 - Watch count of *'s 
 
-Example:
+Example must match format of:
   #######################################
   # Does a thing. 
   # Globals:
