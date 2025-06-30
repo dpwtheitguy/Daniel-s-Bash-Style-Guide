@@ -299,6 +299,9 @@ do-something
 - functions should always be in the format of verb-noun
 - functions should never be in the format of a single word
 - All function names must use lowercase with hyphens (dashes), never underscores. This is mandatory.
+- Function may use namespace if using libraries or to make function more easy to read. 
+e.g.
+ function PLUGINS::install-cni
 
 - Functions should not have more than one hyphen
 e.g.
