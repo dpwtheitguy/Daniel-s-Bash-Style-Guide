@@ -258,6 +258,7 @@ Avoid 'eval':
 - Avoid using 'eval' unless absolutely necessary. Prefer explicit logic.
 
 Arrays:
+- Arrays MUST use the approved noun list which can be pluralized as well
 - Use Bash arrays for lists and argument groups. Expand as "${array[@]}".
 - arrays should always be the plural (file_names) of the singular (file_name)
 
@@ -268,10 +269,35 @@ for username in "${usernames[@]}"; do
   printf 'User: %s\n' "$username"
 done
 
-NOT
+for service in "${services[@]}"
+  ...
+done
+
+for package in "${packages[@]}"
+  ...
+done
+
+for config in "${configs[@]}"
+  ...
+done
+
+#Consts are okay! 
+for dest_ip in "${DEST_IPS[@]}"
+  ...
+done
+
+
+This is NOT okay
 for pet in "${pet_list[@]}"; do
   printf 'Pet: %s\n' "$pet"
 done
+
+This is NOT okay
+for ip in "${SRC_IPS[@]}"
+  ...
+done
+
+
 
 While Loops and Scope:
 - Avoid 'while ... | read' since it can spawn subshells.
