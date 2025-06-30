@@ -495,14 +495,14 @@ Fail Fast:
 
 Logging Error
 - use key value pairs friendly and friendly to Splunk CIM
+- terms like failure and simiar will normally status=failure or result=failure, KVP or JSON
 
 e.g.
 write-error "status=failure at line=123"
 write-error "message=\"unsupport os\" "
 
-NOT
+This is not useful since Splunk won't extract failure by default
   write-error "failure at line $line"
-
 
 Traps:
 - Use of traps to enforce cleanup and log consistent failure messages is required 
