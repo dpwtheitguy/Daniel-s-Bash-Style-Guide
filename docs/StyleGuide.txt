@@ -299,10 +299,16 @@ do-something
 - functions should always be in the format of verb-noun
 - functions should never be in the format of a single word
 - All function names must use lowercase with hyphens (dashes), never underscores. This is mandatory.
- 
+
+- Functions should not have more than one hyphen
+e.g.
+  install-cniplugin
+NOT
+  install-cni-plugin
+
 E.g.
   function install-packages {
-NO
+NOT
   function install_packages {
   function Install_Packages {
 
@@ -446,12 +452,24 @@ write_latency, write_ops, xdelay, xref
 11. Error Handling
 -------------------------------
 - Functions must always explicitly end with a return or exit. 
+
 Fail Fast:
 - All scripts must include: set -euo pipefail
   - -e: exit on error
   - -u: error on unset vars
   - -o pipefail: fail pipelines early
 - Temporarily disable with `set +e` only when explicitly handling errors.
+
+Logging Error
+- use key value pairs friendly and friendly to Splunk CIM
+
+e.g.
+write-error "status=failure at line=123"
+write-error "message=\"unsupport os\" "
+
+NOT
+  write-error "failure at line $line"
+
 
 Traps:
 - Use of traps to enforce cleanup and log consistent failure messages is required 
