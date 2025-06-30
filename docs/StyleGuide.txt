@@ -299,7 +299,8 @@ do-something
 - For libraries, use namespaced functions: libname::function-name.
 - functions should always be in the format of verb-noun
 - functions should never be in the format of a single word
-- All function names must use lowercase with hyphens (dashes), never underscores. This is mandatory.
+- All function names must use lowercase with a hyphen (dash), never underscores. This is mandatory.
+- Any function name that uses more than one hyphen is invalid, even if it's descriptive
 - Function may use namespace if using libraries or to make function more easy to read. 
 e.g.
  function PLUGINS::install-cni
